@@ -1,0 +1,7 @@
+{
+  "ignore": [
+    "./instances.json",
+    "./libRedditInstances.json",
+    "./tedditInstances.json"
+  ]
+}
