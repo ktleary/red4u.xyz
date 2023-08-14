@@ -1,33 +1,29 @@
-import {
-  port,
-  libRedditUrl,
-  tedditUrl,
-  mainInterval,
-  siteIterval,
-} from "./config";
-import fs from "fs";
-// import fetch from "node-fetch";
 import express from "express";
-import { type } from "os";
+import fs from "fs";
+import {
+  libRedditUrl,
+  mainInterval,
+  port,
+  siteIterval,
+  tedditUrl,
+} from "./config";
+import { FILE_NAMES, INSTANCES_TYPES, customUserAgent } from "./constants";
+import { Instance, LibRedditData } from "./types";
 
 const app = express();
 
-// type Instance = {
-//   url: string;
-//   country?: string;
-//   version?: string;
-//   description?: string;
-// };
-
-// type InstanceData = {
-//   updated: string;
-//   instances: Instance[];
-// };
-
 async function isSiteAlive(url: string) {
   try {
-    const response = await fetch("http://localhost:3000/");
-    // const response = await fetch(url);
+    const response = await fetch("http://localhost:3000/", {
+      headers: {
+        "User-Agent": customUserAgent,
+      },
+    });
+    // const response = await fetch(url, {
+    //   headers: {
+    //     "User-Agent": customUserAgent,
+    //   },
+    // });
     if (response.status === 200) {
       const content = await response.text();
       return true;
@@ -38,45 +34,11 @@ async function isSiteAlive(url: string) {
   }
 }
 
-// async function fetchLibRedditData() {
-//   const response = await fetch(libRedditUrl);
-//   const data = await response.json();
-//   return data;
-// }
-
-// async function fetchTedditData() {
-//   const response = await fetch(tedditUrl);
-//   const data = await response.json();
-//   return data;
-// }
-
 async function fetchData(url: string) {
   const response = await fetch(url);
   const data = await response.json();
   return data;
 }
-
-type Instance = {
-  url: string;
-  country?: string;
-  version?: string;
-  description?: string;
-};
-
-type LibRedditData = {
-  updated: string;
-  instances: Instance[];
-};
-
-const INSTANCES_TYPES = {
-  LIBREDDIT: "libreddit",
-  TEDDIT: "teddit",
-};
-
-const FILE_NAMES = {
-  LIBREDDIT: "libRedditInstances.json",
-  TEDDIT: "tedditInstances.json",
-};
 
 function saveToFile(instances: string[], instancesType: string) {
   const filename =
@@ -110,6 +72,9 @@ const hasProtocol = (url: string = "") => {
 
 // check instances and save good instances to goodInstances
 async function checkInstances(instances: string[], instancesType: string) {
+  if (!instances?.length) {
+    return;
+  }
   goodInstances[instancesType].length = 0;
 
   for (const instance of instances) {
@@ -184,39 +149,3 @@ app.get("/api/instances/active", (req: any, res: any) => {
 app.listen(port, () => {
   console.log(`Server started on port ${port}!`);
 });
-
-/*
-libReddit data structure example:
-{
-"updated": "2023-08-13",
-"instances": [
-{
-"url": "https://safereddit.com",
-"country": "US",
-"version": "v0.30.1",
-"description": "SFW only"
-},
-{
-"url": "https://libreddit.kavin.rocks",
-"country": "IN",
-"version": "v0.30.1"
-},
-//...
-]
-}
-
-teddit data structure example:
-
-[
-{
-"url": "https://teddit.net"
-},
-{
-"url": "https://teddit.ggc-project.de"
-},
-{
-"url": "https://teddit.zaggy.nl"
-},
-//..
-]
-*/
