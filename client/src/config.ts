@@ -65,8 +65,8 @@ const testInstances = {
   ],
 };
 
-const endpoint = "/api/instances/active";
+const endpoint = "http://localhost:8080/api/instances/active";
 
-const testing = true;
+const testing = false;
 
 export { endpoint, testing, testInstances };

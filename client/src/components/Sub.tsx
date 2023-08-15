@@ -15,16 +15,28 @@ const containerStyle = {
   marginTop: 12,
 };
 
+const titleStyle = {
+  padding: 0,
+  margin: 0,
+  marginBottom: 12,
+};
+
 const buttonWrapperStyle = {
   display: "flex",
-  justifyContent: "space-between",
+  justifyContent: "flex-start",
   width: "67%",
+  marginTop: 12,
 };
 
 const buttonStyle = {
   marginLeft: 12,
-  width: '30%',
-  maxHeight: 64,
+  width: 128,
+  alignText: "center",
+  fontSize: 14,
+  letterSpacing: -0.35,
+  height: 32,
+  borderRadius: 16,
+  padding: 0,
 };
 
 const Sub = ({ instances }: Props) => {
@@ -34,13 +46,14 @@ const Sub = ({ instances }: Props) => {
   const disabled = !sub || !instances.length;
   useEffect(() => {
     if (instances && sub) {
-      setInstanceLinks(buildUrls(instances, sub));
+      const rSub = sub.startsWith("r/") ? sub : `r/${sub}`;
+      setInstanceLinks(buildUrls(instances, rSub));
     }
   }, [instances, sub]);
 
   return (
     <div style={containerStyle}>
-      <h3>by Reddit Sub</h3>
+      <h3 style={titleStyle}>by Reddit Sub</h3>
       <div>
         <input
           type="text"

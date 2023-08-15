@@ -1,14 +1,16 @@
 import * as React from "react";
-import { FC, useState, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
+import Description from "./components/Description";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import InstancesType from "./components/InstancesType";
+import Message from "./components/Message";
+import Sub from "./components/Sub";
+import Url from "./components/Url";
 import { MESSAGES } from "./constants";
 import { getInstanceData } from "./services/data.service";
-import styled from "styled-components";
-import Header from "./components/Header";
-import Description from "./components/Description";
-import Message from "./components/Message";
-import InstancesType from "./components/InstancesType";
 import { Instances } from "./types";
-import Sub from "./components/Sub";
 
 const AppContainer = styled.div`
   max-width: 960px;
@@ -40,7 +42,7 @@ const App: FC = () => {
   }, []);
 
   const filteredInstances: string[] = useMemo(() => {
-    const { libreddit, teddit } = instances;
+    const { libreddit, teddit } = instances || {};
     if (instancesType === "all") return [...libreddit, ...teddit];
     if (instancesType === "libreddit") return libreddit;
     if (instancesType === "teddit") return teddit;
@@ -57,6 +59,8 @@ const App: FC = () => {
         setInstancesType={setInstancesType}
       />
       <Sub instances={filteredInstances} />
+      <Url instances={filteredInstances} />
+      <Footer />
     </AppContainer>
   );
 };

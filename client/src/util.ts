@@ -9,7 +9,7 @@ const isValidUrl = (url: string) => {
 
 const buildUrls = (instances: string[], name: string) =>
   instances.reduce(
-    (agg, instance) => [...agg, instance.concat("/r/").concat(name)],
+    (agg, instance) => [...agg, instance.concat("/").concat(name)],
     []
   );
 

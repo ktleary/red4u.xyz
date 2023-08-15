@@ -19,16 +19,21 @@ const linkContainerStyle = {
 };
 
 interface Props {
-    instanceLinks: string[];
+  instanceLinks: string[];
 }
 
-const List = ({ instanceLinks }: Props) =>
-  instanceLinks.map((link, i) => (
-    <div key={`list-8566088441-${i}`} style={linkContainerStyle}>
-      <a href={link} style={linkStyle}>
-        {link}
-      </a>
+const List = ({ instanceLinks }: Props) => {
+  return (
+    <div>
+      {instanceLinks.map((link, i) => (
+        <div key={`list-8566088441-${i}`} style={linkContainerStyle}>
+          <a href={link} style={linkStyle}>
+            {link}
+          </a>
+        </div>
+      ))}
     </div>
-  ));
+  );
+};
 
 export default List;

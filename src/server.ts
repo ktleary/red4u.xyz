@@ -1,5 +1,6 @@
 import express from "express";
 import fs from "fs";
+import cors from "cors";
 import {
   libRedditUrl,
   mainInterval,
@@ -11,19 +12,18 @@ import { FILE_NAMES, INSTANCES_TYPES, customUserAgent } from "./constants";
 import { Instance, LibRedditData } from "./types";
 
 const app = express();
+app.use(cors());
 
 async function isSiteAlive(url: string) {
   try {
-    const response = await fetch("http://localhost:3000/", {
+    const urlCheck = "http://localhost:3000" || url.concat("/r/all");
+    // console.log("Checking", urlCheck);
+    console.log("Checking", url);
+    const response = await fetch(urlCheck, {
       headers: {
         "User-Agent": customUserAgent,
       },
     });
-    // const response = await fetch(url, {
-    //   headers: {
-    //     "User-Agent": customUserAgent,
-    //   },
-    // });
     if (response.status === 200) {
       const content = await response.text();
       return true;
@@ -81,11 +81,12 @@ async function checkInstances(instances: string[], instancesType: string) {
     if (!instance || !hasProtocol(instance)) {
       continue;
     }
-    console.log(`Checking ${instance}`);
+
     if (!(await isSiteAlive(instance))) {
       console.log(`Warning: ${instance} might be down.`);
       continue;
     }
+    console.log(`Success: ${instance} is up.`);
     goodInstances[instancesType].push(instance);
   }
 

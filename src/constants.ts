@@ -8,4 +8,4 @@ export const FILE_NAMES = {
   TEDDIT: "tedditInstances.json",
 };
 
-export const customUserAgent = 'openred.xyz/1.0';
+export const customUserAgent = 'red4u.xyz/1.0';

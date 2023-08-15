@@ -7,6 +7,7 @@ interface Props {
 
 const InstancesType = ({ instancesType, setInstancesType }: Props) => (
   <div>
+    Select source:{" "}
     <input
       type="radio"
       id="all"
@@ -14,9 +15,9 @@ const InstancesType = ({ instancesType, setInstancesType }: Props) => (
       value="all"
       checked={instancesType === "all"}
       onChange={() => setInstancesType("all")}
+      style={{ marginLeft: 8 }}
     />
-    <label htmlFor="all">All</label>
-
+    <label htmlFor="all">all</label>
     <input
       type="radio"
       id="libreddit"
@@ -25,7 +26,7 @@ const InstancesType = ({ instancesType, setInstancesType }: Props) => (
       checked={instancesType === "libreddit"}
       onChange={() => setInstancesType("libreddit")}
     />
-    <label htmlFor="libreddit">LibReddit</label>
+    <label htmlFor="libreddit">libreddit</label>
     <input
       type="radio"
       id="teddit"
@@ -34,7 +35,7 @@ const InstancesType = ({ instancesType, setInstancesType }: Props) => (
       checked={instancesType === "teddit"}
       onChange={() => setInstancesType("teddit")}
     />
-    <label htmlFor="teddit">Teddit</label>
+    <label htmlFor="teddit">teddit</label>
   </div>
 );
 

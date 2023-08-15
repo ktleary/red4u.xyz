@@ -14,7 +14,7 @@ const headerContainerStyle = {
 const Header = () => (
   <h1 style={headerContainerStyle}>
     <a href="/" style={linkStyle}>
-      OpenRed
+      red4u
     </a>
   </h1>
 );
