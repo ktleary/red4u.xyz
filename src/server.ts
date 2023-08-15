@@ -16,9 +16,8 @@ app.use(cors());
 
 async function isSiteAlive(url: string) {
   try {
-    const urlCheck = "http://localhost:3000" || url.concat("/r/all");
+    const urlCheck = url.concat("/r/all");
     // console.log("Checking", urlCheck);
-    console.log("Checking", url);
     const response = await fetch(urlCheck, {
       headers: {
         "User-Agent": customUserAgent,
