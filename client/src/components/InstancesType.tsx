@@ -1,12 +1,18 @@
 import * as React from "react";
+import styled from "styled-components";
 
 interface Props {
   instancesType: string;
   setInstancesType: (instancesType: string) => void;
 }
 
+const RadioWrapper = styled.div`
+  margin-top: 8px;
+  margin-bottom: 8px;
+`;
+
 const InstancesType = ({ instancesType, setInstancesType }: Props) => (
-  <div>
+  <RadioWrapper>
     Select source:{" "}
     <input
       type="radio"
@@ -36,7 +42,7 @@ const InstancesType = ({ instancesType, setInstancesType }: Props) => (
       onChange={() => setInstancesType("teddit")}
     />
     <label htmlFor="teddit">teddit</label>
-  </div>
+  </RadioWrapper>
 );
 
 export default InstancesType;

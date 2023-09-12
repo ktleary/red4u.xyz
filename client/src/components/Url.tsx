@@ -18,23 +18,20 @@ const titleStyle = {
   margin: 0,
   marginBottom: 12,
 };
-
 const buttonWrapperStyle = {
   display: "flex",
   justifyContent: "flex-start",
-  width: "67%",
+  width: "87%",
   marginTop: 12,
 };
 
 const buttonStyle = {
   marginLeft: 12,
-  width: 128,
   alignText: "center",
-  fontSize: 14,
+  fontSize: 10,
   letterSpacing: -0.35,
-  height: 32,
-  borderRadius: 16,
-  padding: 0,
+  padding: 2,
+  maxWidth: 100,
 };
 
 interface UrlProps {

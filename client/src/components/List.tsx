@@ -12,7 +12,7 @@ const linkStyle = {
 
 const linkContainerStyle = {
   borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-  height: 24,
+  // height: 24,
   margin: 0,
   padding: "12px 0 12px 0",
   width: "100%",

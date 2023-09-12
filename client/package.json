@@ -1,6 +1,6 @@
 {
   "name": "openred-client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "client openred reddit link converter",
   "source": "src/index.html",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://sr.ht/~djlooop/openred-client"
+    "url": "https://sr.ht/~djlooop/red4u.xyz/"
   },
   "keywords": [
     "reddit",

@@ -1,8 +1,15 @@
 import * as React from "react";
+import styled from "styled-components";
+
+const Header2 = styled.h2`
+  padding: 0;
+  margin: 0;
+  margin-bottom: 12px;
+`;
 
 const Footer = () => (
   <div>
-    <h2>About</h2>
+    <Header2>About</Header2>
     <p>
       openRed respects your privacy is a free and open source GPL-3 licensed
       tool which uses no cookies or tracking. All URL transformations happen in
@@ -14,7 +21,7 @@ const Footer = () => (
       sourcehut.
     </p>
     <div>
-      <h2>Related Tools</h2>
+      <Header2>Related Tools</Header2>
       <ul>
         <li>
           <a href="https://twit2nit.xyz">twit2nit.xyz</a> creates Nitter links
