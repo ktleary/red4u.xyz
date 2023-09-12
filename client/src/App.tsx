@@ -51,7 +51,6 @@ const App: FC = () => {
 
   return (
     <AppContainer>
-      
       <Header />
       <Description />
       <Message message={message} />

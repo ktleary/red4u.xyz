@@ -65,12 +65,7 @@ const testInstances = {
   ],
 };
 
-/*
-app.get("/api/instances/active", (req: any, res: any) => {
-  res.status(200).json(goodInstances);
-});
-*/
-const testing = true;
+const testing = false;
 
 const endpoint = testing
   ? "http://localhost:8080/api/instances/"
