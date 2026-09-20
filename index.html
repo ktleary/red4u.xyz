@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>red4u.xyz — view Reddit on Redlib</title>
+<meta
+  name="description"
+  content="Convert Reddit links and subreddits to working Redlib instances. Mobile-first, GPL, no trackers."
+/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0a0e12" />
+<link
+  rel="icon"
+  href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230a0e12'/%3E%3Ccircle cx='12' cy='13.5' r='5.5' fill='none' stroke='%23e8b34b' stroke-width='2'/%3E%3Ccircle cx='12' cy='6' r='1.8' fill='%23e8b34b'/%3E%3Cpath d='M12 7.5 14 4.5' stroke='%23e8b34b' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"
+/>
+<style>
+  :root {
+    --bg: #f0f2f3; --card: #ffffff; --fg: #1c2630; --muted: #5c6b77;
+    --accent: #a87414; --accent-soft: #f3ead6; --border: #d9dee2; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --ok: #2f6f4f; --bad: #d9534f;
+  }
+  html[data-theme="dark"] {
+    --bg: #0a0e12; --card: #10161c; --fg: #c9d4dd; --muted: #5c6b77;
+    --accent: #e8b34b; --accent-soft: #1c2630; --border: #1c2630;
+    --ok: #5da97c; --bad: #e07b77;
+  }
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) { --bg: #0a0e12; --card: #10161c; --fg: #c9d4dd; --muted: #5c6b77;
+      --accent: #e8b34b; --accent-soft: #1c2630; --border: #1c2630; --ok: #5da97c; --bad: #e07b77; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    max-width: 640px; margin-inline: auto; padding: 40px 16px 80px;
+  }
+  a { color: inherit; text-decoration: none; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px; }
+  .brand { font: 600 18px var(--mono); letter-spacing: -0.01em; }
+  .brand span { color: var(--accent); }
+  #theme-btn {
+    border: 1px solid var(--border); background: var(--card); color: var(--muted);
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  #theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; font-weight: 650; letter-spacing: -0.02em; }
+  .lede { color: var(--muted); margin: 0 0 32px; max-width: 46ch; }
+
+  .controls { display: flex; gap: 8px; margin-bottom: 10px; }
+  #target {
+    flex: 1; min-width: 0; font: 15px var(--mono); color: var(--fg); background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px;
+  }
+  #target:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  #convert {
+    font: 600 14px var(--mono); color: var(--bg); background: var(--accent);
+    border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer; white-space: nowrap;
+  }
+  #convert:hover { filter: brightness(1.08); }
+  #status { font: 12.5px/1.5 var(--mono); color: var(--muted); min-height: 20px; margin: 0 0 24px; }
+  #status.err { color: var(--bad); }
+
+  .row-label {
+    font: 11px/1 var(--mono); text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--muted); margin: 0 0 12px; display: flex; justify-content: space-between;
+  }
+  .inst {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px;
+    background: var(--card); margin-bottom: 8px;
+  }
+  a.inst:hover { border-color: var(--accent); }
+  .inst .info { flex: 1; min-width: 0; }
+  .inst .host { font: 600 14.5px var(--mono); display: flex; gap: 8px; align-items: baseline; }
+  .inst .meta { font: 11.5px var(--mono); color: var(--muted); }
+  .inst .meta .up { color: var(--ok); }
+  .inst .meta .down { color: var(--bad); }
+  .cue { font: 10.5px var(--mono); color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+  .cue.cf { color: var(--accent); }
+  .copy {
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    font: 12px var(--mono); padding: 6px 10px; border-radius: 8px; cursor: pointer; flex: none;
+  }
+  .copy:hover { color: var(--accent); border-color: var(--accent); }
+  .actions { display: flex; gap: 8px; margin-top: 20px; }
+  .actions button {
+    flex: 1; font: 600 14px var(--mono); padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--card); color: var(--fg);
+  }
+  .actions button:hover { border-color: var(--accent); color: var(--accent); }
+  .actions #random { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .footer {
+    margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; font-family: var(--mono);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  @media (max-width: 480px) {
+    .controls { flex-direction: column; }
+    #convert { width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <span class="brand">red4u<span>.xyz</span></span>
+    <button id="theme-btn" aria-label="Toggle theme" title="Theme: system">
+      <svg id="icon-system" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 000 18z" fill="currentColor" stroke="none"/></svg>
+      <svg id="icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" hidden><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+      <svg id="icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" hidden><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12h2.5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+    </button>
+  </div>
+
+  <h1>View Reddit on Redlib.</h1>
+  <p class="lede">Paste a subreddit or Reddit URL and get working Redlib instance links, reachability-ranked.</p>
+
+  <div class="controls">
+    <input id="target" inputmode="url" placeholder="r/LocalLLaMA or a reddit.com URL" autocomplete="off" spellcheck="false" />
+    <button id="convert">Convert</button>
+  </div>
+  <p id="status" role="status"></p>
+
+  <p class="row-label"><span id="count"></span><span id="updated"></span></p>
+  <div id="results"></div>
+
+  <div class="actions">
+    <button id="reload">Refresh instances</button>
+    <button id="random">Go random ▶</button>
+  </div>
+
+  <div class="footer">
+    <span>GPL-3.0 · no ads · no tracking</span>
+    <span><a href="https://github.com/ktleary/red4u.xyz">source</a> · <a href="https://github.com/redlib-org/redlib-instances">instance data</a></span>
+  </div>
+
+<script>
+// ---- theme (stringtalk family behavior) ----
+(() => {
+  const root = document.documentElement, btn = document.getElementById('theme-btn');
+  const icons = { system: document.getElementById('icon-system'),
+                  dark: document.getElementById('icon-dark'),
+                  light: document.getElementById('icon-light') };
+  const next = { system: 'dark', dark: 'light', light: 'system' };
+  const modes = ['system', 'dark', 'light'];
+  let mode = localStorage.getItem('st-theme');
+  if (!modes.includes(mode)) mode = 'system';
+  const apply = (m) => {
+    mode = m;
+    if (m === 'system') root.removeAttribute('data-theme'); else root.dataset.theme = m;
+    for (const [k, el] of Object.entries(icons)) el.hidden = k !== m;
+    btn.title = `Theme: ${m}`;
+  };
+  apply(mode);
+  btn.addEventListener('click', () => { apply(next[mode]); localStorage.setItem('st-theme', mode); });
+})();
+
+// ---- red4u ----
+const $ = (id) => document.getElementById(id);
+const LIST_URL = 'https://raw.githubusercontent.com/redlib-org/redlib-instances/main/instances.json';
+const CACHE_KEY = 'r4u-instances-v1';
+const PROBE_TIMEOUT = 4000;
+
+// subreddit name or reddit URL -> redlib path (redlib mirrors reddit paths directly)
+function parseInput(raw) {
+  const t = raw.trim().replace(/^\/+/, '');
+  if (!t) return { error: 'Enter a subreddit or Reddit URL.' };
+  if (/^https?:\/\//i.test(t) || /^[a-z0-9.-]*reddit\.com\//i.test(t)) {
+    try {
+      const u = new URL(/^https?:\/\//i.test(t) ? t : `https://${t}`);
+      if (!/(^|\.)reddit\.com$/i.test(u.hostname)) return { error: 'Not a reddit.com URL.' };
+      const path = (u.pathname + u.search).replace(/\/+$/, '');
+      if (!path || path === '') return { error: 'That URL has no path — enter a subreddit or post URL.' };
+      return { path };
+    } catch { return { error: 'That does not look like a URL.' }; }
+  }
+  const sub = t.replace(/^\/?r\//i, '').replace(/\/+$/, '');
+  if (!/^[A-Za-z0-9][A-Za-z0-9_]{1,20}$/.test(sub)) return { error: 'That does not look like a subreddit name.' };
+  return { path: `/r/${sub}` };
+}
+
+async function loadInstances(force = false) {
+  const cached = force ? null : sessionStorage.getItem(CACHE_KEY);
+  if (cached) {
+    const { list, at } = JSON.parse(cached);
+    return { list, updated: JSON.parse(cached).updated, age: Math.round((Date.now() - at) / 60000) };
+  }
+  const res = await fetch(LIST_URL, { signal: AbortSignal.timeout(8000) });
+  if (!res.ok) throw new Error(`instance list returned ${res.status}`);
+  const data = await res.json();
+  const list = (data.instances || [])
+    .filter((i) => i.url && /^https:\/\//.test(i.url))   // clearnet https only (skip onion/i2p)
+    .map((i) => ({ uri: i.url.replace(/\/+$/, ''), country: i.country, description: i.description,
+                   cloudflare: !!i.cloudflare, reachable: null }));
+  if (!list.length) throw new Error('instance list is empty');
+  const out = { list, updated: data.updated, at: Date.now() };
+  sessionStorage.setItem(CACHE_KEY, JSON.stringify(out));
+  return { list, updated: data.updated, age: 0 };
+}
+
+// reachability probe: no-cors fetch resolves on network success, rejects on failure/timeout
+async function probe(uri) {
+  try {
+    await fetch(uri + '/settings', { mode: 'no-cors', signal: AbortSignal.timeout(PROBE_TIMEOUT) });
+    return true;
+  } catch { return false; }
+}
+
+let state = { list: [], updated: null, age: 0, path: null, urls: [] };
+
+function render() {
+  const results = $('results');
+  if (!state.path) { results.innerHTML = ''; $('count').textContent = ''; $('updated').textContent = ''; return; }
+  const sorted = [...state.list].sort((a, b) => (b.reachable === true) - (a.reachable === true));
+  state.urls = sorted.map((i) => i.uri + state.path);
+  $('count').textContent = `${state.urls.length} instances available`;
+  $('updated').textContent = `list updated ${state.updated}${state.age ? ` · cached ${state.age}m ago` : ''}`;
+  results.innerHTML = sorted.map((i) => {
+    const host = new URL(i.uri).hostname;
+    const reach = i.reachable === true ? '<span class="up">reachable</span>'
+                : i.reachable === false ? '<span class="down">no reply</span>' : '';
+    const cues = [
+      i.country ? `<span class="cue">${i.country}</span>` : '',
+      i.cloudflare ? '<span class="cue cf">cf</span>' : '',
+      i.description ? `<span class="meta">${i.description}</span>` : '',
+    ].join('');
+    return `<a class="inst" href="${i.uri}${state.path}" rel="noreferrer">
+      <span class="info">
+        <span class="host">${host} ${reach}</span>
+        <span class="meta">${cues}</span>
+      </span>
+      <button class="copy" data-url="${i.uri}${state.path}" aria-label="Copy link">copy</button>
+    </a>`;
+  }).join('');
+}
+
+function setStatus(msg, isErr = false) {
+  const s = $('status');
+  s.textContent = msg || '';
+  s.className = isErr ? 'err' : '';
+}
+
+async function convert() {
+  const parsed = parseInput($('target').value);
+  if (parsed.error) { setStatus(parsed.error, true); state.path = null; render(); return; }
+  state.path = parsed.path;
+  try {
+    setStatus('Loading instance list…');
+    const { list, updated, age } = await loadInstances();
+    state.list = list; state.updated = updated; state.age = age;
+    setStatus('Ready — pick an instance below, or go random.');
+    render();
+    // probe in the background, re-rank as results come in
+    Promise.all(list.map(async (i) => {
+      i.reachable = await probe(i.uri);
+      if (state.path) render();
+    }));
+  } catch (e) {
+    setStatus(`Could not load instances: ${e.message}`, true);
+    render();
+  }
+}
+
+$('convert').addEventListener('click', convert);
+$('target').addEventListener('keydown', (e) => { if (e.key === 'Enter') convert(); });
+$('reload').addEventListener('click', async () => {
+  sessionStorage.removeItem(CACHE_KEY);
+  setStatus('Refreshing instance list…');
+  await convert();
+});
+$('random').addEventListener('click', () => {
+  const good = state.urls.filter((_, idx) => state.list[idx] && state.list[idx].reachable !== false);
+  const pool = good.length ? good : state.urls;
+  if (!pool.length) { setStatus('Convert a target first.', true); return; }
+  window.location.href = pool[Math.floor(Math.random() * pool.length)];
+});
+$('results').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.copy');
+  if (!btn) return;
+  e.preventDefault(); e.stopPropagation();
+  await navigator.clipboard.writeText(btn.dataset.url);
+  const old = btn.textContent;
+  btn.textContent = 'copied';
+  setTimeout(() => (btn.textContent = old), 1200);
+});
+
+// ---- boot: prefill from ?url= or ?sub= and auto-convert ----
+(() => {
+  const search = window.location.search;
+  const m = search.match(/[?&](?:url|sub)=([^#]+)/);
+  if (!m) return;
+  let q = m[1];
+  try { q = decodeURIComponent(q); } catch { /* already plain */ }
+  $('target').value = q;
+  convert();
+})();
+</script>
+</body>
+</html>
